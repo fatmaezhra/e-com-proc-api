@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="Products" doc:id="b754f139-81d6-4179-98fd-593cd6907b79" >
+		<logger level="INFO" doc:name="payload" doc:id="a5babe5b-3cb3-451d-b06c-a6a1cf19a150" message="payload"/>
+		<http:request method="GET" doc:name="Request" doc:id="d082aef9-842f-44ac-a420-755e4243d2fc" url="http://localhost:8081/e-com-sys-api/v1/products" />
+		<logger level="INFO" doc:name="outputwix" doc:id="b8472e19-7178-422e-9160-e593322cd205" message="outputwix#[payload]" />
+		<ee:transform doc:name="Transform Message" doc:id="01d3c080-9d95-47b3-9091-a25e5b9eb9a2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var productName = vars.qname 
+---
+(payload.products default []) 
+    filter ((item) -> item.name == productName) 
+    map ((item) -> {
+        name: item.name,
+        inStock: item.stock.inStock default false,
+        price: item.price.price default 0.0,
+        brand: item.brand default "Unknown"
+    })
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<choice doc:name="Choice" doc:id="16e84b3a-23b5-42cf-9cf7-a2fb51564e35" >
+			<when expression="#[(vars.qprice as Boolean) and ((vars.qinstock as Boolean) == false)]">
+				<ee:transform doc:name="Transform Message" doc:id="0f53a24e-b0a7-40f9-ab87-f07150816e3c">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+(payload.name default []) zip (payload.brand default []) zip (payload.price default []) map ((item) -> {
+    name: item[0][0],
+    brand: item[0][1], 
+    price: item[1]
+   
+         
+})
+]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="d3645f3a-caa6-4c45-9bb3-f16065a57a2b" message="apretchoice#[payload]"/>
+			</when>
+			<otherwise>
+				<choice doc:name="Choice" doc:id="076e477b-4f76-4fce-a03b-a86781bd943d" >
+					<when expression="#[(vars.qinstock as Boolean) and ((vars.qprice as Boolean) == false)]">
+						<ee:transform doc:name="Transform Message" doc:id="a8955144-0f83-4f0c-b3d3-d1a60d8d03d1" >
+							<ee:message >
+								<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+(payload.name default [])zip (payload.brand default []) zip (payload.inStock default []) map ((item) -> {
+    name: item[0][0], 
+    brand: item[0][1], 
+    inStock: item[1]      
+})
+]]></ee:set-payload>
+							</ee:message>
+						</ee:transform>
+					</when>
+					<otherwise >
+						<choice doc:name="Choice" doc:id="cbbff29a-6475-4689-82f4-e9afe26a4f42" >
+							<when expression="#[(vars.qinstock as Boolean) and (vars.qprice as Boolean)]">
+								<ee:transform doc:name="Transform Message" doc:id="ea355f96-c8c8-464e-856e-77878e42b0b9" >
+									<ee:message >
+										<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        price: item.price,
+        inStock: item.inStock
+    })
+]]></ee:set-payload>
+									</ee:message>
+								</ee:transform>
+							</when>
+							<otherwise >
+								<logger level="INFO" doc:name="No question" doc:id="eece50bb-152f-4a4e-b315-719ed88fbc9a" message="No question " />
+							</otherwise>
+						</choice>
+					</otherwise>
+				</choice>
+			</otherwise>
+		</choice>
+	</sub-flow>
+</mule>

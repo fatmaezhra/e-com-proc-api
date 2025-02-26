@@ -1,0 +1,91 @@
+%dw 2.0
+
+type auto_b754f139_81d6_4179_98fd_593cd6907b79_Input_Payload = Array<{  description: String,   discount: {    "type": String,     value: Number,     _?: Any  },   media: {    items: Array<Any>, 
+    _?: Any
+  }, 
+  variants: Array<Any>, 
+  productPageUrl: {
+    path: String, 
+    base: String, 
+    _?: Any
+  }, 
+  lastUpdated: String, 
+  price: {
+    discountedPrice: Number, 
+    price: Number, 
+    formatted: {
+      discountedPrice: String, 
+      price: String, 
+      _?: Any
+    }, 
+    currency: String, 
+    _?: Any
+  }, 
+  exportProductId: String, 
+  priceData: {
+    discountedPrice: Number, 
+    price: Number, 
+    formatted: {
+      discountedPrice: String, 
+      price: String, 
+      _?: Any
+    }, 
+    currency: String, 
+    _?: Any
+  }, 
+  costRange: {
+    minValue: Number, 
+    maxValue: Number, 
+    _?: Any
+  }, 
+  additionalInfoSections: Array<Any>, 
+  id: String, 
+  ribbons: Array<Any>, 
+  sku: String, 
+  stock: {
+    quantity: Number, 
+    inventoryStatus: String, 
+    inStock: Boolean, 
+    trackInventory: Boolean, 
+    _?: Any
+  }, 
+  brand: String, 
+  slug: String, 
+  productType: String, 
+  numericId: String, 
+  visible: Boolean, 
+  productOptions: Array<{    optionType: String,     name: String,     choices: Array<{      visible: Boolean,       description: String,       inStock: Boolean,       value: String,       _?: Any    }>, 
+    _?: Any
+  }>, 
+  ribbon: String, 
+  weight: Number, 
+  customTextFields: Array<Any>, 
+  manageVariants: Boolean, 
+  inventoryItemId: String, 
+  createdDate: String, 
+  collectionIds: Array<String>, 
+  name: String, 
+  convertedPriceData: {
+    discountedPrice: Number, 
+    price: Number, 
+    formatted: {
+      discountedPrice: String, 
+      price: String, 
+      _?: Any
+    }, 
+    currency: String, 
+    _?: Any
+  }, 
+  weightRange: {
+    minValue: Number, 
+    maxValue: Number, 
+    _?: Any
+  }, 
+  priceRange: {
+    minValue: Number, 
+    maxValue: Number, 
+    _?: Any
+  }, 
+  _?: Any
+}>
+
