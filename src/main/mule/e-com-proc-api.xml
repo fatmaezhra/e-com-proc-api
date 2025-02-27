@@ -30,6 +30,18 @@ attributes.queryParams.qprice]]></ee:set-variable>
 output application/json
 ---
 attributes.queryParams.qinstock]]></ee:set-variable>
+				<ee:set-variable variableName="qcolor" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.qcolor]]></ee:set-variable>
+				<ee:set-variable variableName="qsize" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.qsize]]></ee:set-variable>
+				<ee:set-variable variableName="qURL" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.qURL]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <apikit:router config-ref="e-com-proc-api-config" />
