@@ -42,6 +42,30 @@ attributes.queryParams.qsize]]></ee:set-variable>
 output application/json
 ---
 attributes.queryParams.qURL]]></ee:set-variable>
+				<ee:set-variable variableName="qreference" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.qreference]]></ee:set-variable>
+				<ee:set-variable variableName="qdimensions" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.qdimensions]]></ee:set-variable>
+				<ee:set-variable variableName="qref" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.qref]]></ee:set-variable>
+				<ee:set-variable variableName="qdim" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.qdim]]></ee:set-variable>
+				<ee:set-variable variableName="qspec" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.qspec]]></ee:set-variable>
+				<ee:set-variable variableName="qtaille" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.qtaille]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <apikit:router config-ref="e-com-proc-api-config" />

@@ -38,6 +38,22 @@ var productName = vars.qname
                     (colorOption.choices default [])
                         filter ((choice) -> choice.inStock)
                         map ((choice )-> choice.value)
+                ),
+         reference: 
+            (item.productOptions default [])
+                filter ((opt )-> opt.name == "reference") 
+                flatMap ((colorOption) -> 
+                    (colorOption.choices default [])
+                        filter ((choice) -> choice.inStock)
+                        map ((choice )-> choice.value)
+                ),
+          dimensions: 
+            (item.productOptions default [])
+                filter ((opt )-> opt.name == "dimensions") 
+                flatMap ((colorOption) -> 
+                    (colorOption.choices default [])
+                        filter ((choice) -> choice.inStock)
+                        map ((choice )-> choice.value)
                 )
     })
 ]]></ee:set-payload>
@@ -66,20 +82,23 @@ var productName = vars.qname
 &#93;&#93;></ee:set-payload>
 			</ee:message>
 		</ee:transform> [STUDIO] -->
-		<choice doc:name="Choice" doc:id="16e84b3a-23b5-42cf-9cf7-a2fb51564e35" >
-			<when expression='#[((vars.qprice default "") == "true") and !( (vars.qinstock default "") == "true")]'>
+		<choice doc:name="qprice" doc:id="16e84b3a-23b5-42cf-9cf7-a2fb51564e35" >
+			<when expression='#[(vars.qprice == "true") and (vars.qspec == null) and (vars.qdim == null) and (vars.qref == null) and (vars.qtaille == null) and (vars.qinstock == null)]'>
 				<ee:transform doc:name="Transform Message" doc:id="0f53a24e-b0a7-40f9-ab87-f07150816e3c">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-(payload.name default []) zip (payload.brand default []) zip (payload.price default []) map ((item) -> {
-    name: item[0][0],
-    brand: item[0][1], 
-    price: item[1]
-   
-         
-})
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        price: item.price
+       
+    })
+
+
 ]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
@@ -87,24 +106,25 @@ output application/json
 			</when>
 			<otherwise>
 				<choice doc:name="Choice" doc:id="076e477b-4f76-4fce-a03b-a86781bd943d" >
-					<when expression='#[((vars.qinstock default "") == "true") and !( (vars.qprice default "") == "true")]'>
+					<when expression='#[(vars.qinstock == "true")and (vars.qspec == null) and (vars.qdim == null) and (vars.qref == null) and (vars.qtaille == null) and (vars.qprice == null)]'>
 						<ee:transform doc:name="Transform Message" doc:id="a8955144-0f83-4f0c-b3d3-d1a60d8d03d1" >
 							<ee:message >
 								<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-(payload.name default [])zip (payload.brand default []) zip (payload.inStock default []) map ((item) -> {
-    name: item[0][0], 
-    brand: item[0][1], 
-    inStock: item[1]      
-})
-]]></ee:set-payload>
+(payload.name default[]) zip  (payload.brand default[])zip  (payload.dimension default[])zip  (payload.inStock default[])
+   
+    map ((item) -> {
+        name: item[0][0], 
+        brand: item[0][1], 
+        inStock: item[1] 
+    })]]></ee:set-payload>
 							</ee:message>
 						</ee:transform>
 					</when>
 					<otherwise >
 						<choice doc:name="Choice" doc:id="cbbff29a-6475-4689-82f4-e9afe26a4f42" >
-							<when expression='#[((vars.qinstock default "") == "true") and ((vars.qprice default "") == "true")]'>
+							<when expression='#[((vars.qinstock =="true") and (vars.qprice == "true")and (vars.qspec == null) and (vars.qdim == null) and (vars.qref == null) and (vars.qtaille == null))]'>
 								<ee:transform doc:name="Transform Message" doc:id="ea355f96-c8c8-464e-856e-77878e42b0b9" >
 									<ee:message >
 										<ee:set-payload ><![CDATA[%dw 2.0
@@ -124,58 +144,389 @@ payload
 							</when>
 							<otherwise >
 								<choice doc:name="Choice" doc:id="194a8df0-a9e7-4a7a-849f-9b38548d7fb0" >
-									<when expression='#[(vars.qcolor  == "true")]'>
+									<when expression='#[(vars.qcolor  == "true")and (vars.qspec == null) and (vars.qdim == null) and (vars.qref == null) and (vars.qtaille == null)]'>
 										<ee:transform doc:name="Transform Message" doc:id="93a51be0-d813-4c6d-9c25-368f707fb508" >
 											<ee:message >
 												<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-(payload.name default [])zip (payload.color default [])  map ((item) -> {
-    name: item[0], 
-    color: item[1], 
-        
-})
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        color: item.color
+       
+    })
+
 ]]></ee:set-payload>
 											</ee:message>
 										</ee:transform>
 									</when>
 									<otherwise >
 										<choice doc:name="Choice" doc:id="e467ba8d-15d0-4659-8e28-f648596e7144">
-											<when expression='#[(vars.qsize  == "true")]'>
+											<when expression='#[(vars.qsize  == "true")and (vars.qspec == null) and (vars.qdim == null) and (vars.qref == null) and (vars.qtaille == null)]'>
 												<ee:transform doc:name="Transform Message" doc:id="53090b22-2a35-4c10-a41a-bd9ddddb5563" >
 													<ee:message >
 														<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-(payload.name default [])zip (payload.size default [])  map ((item) -> {
-    name: item[0], 
-    size: item[1], 
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        size: item.size
         
-})
+    })
+
+
 ]]></ee:set-payload>
 													</ee:message>
 												</ee:transform>
 											</when>
 											<otherwise >
 												<choice doc:name="Choice" doc:id="201ce43d-31dd-44ed-be95-9f371ee441dc">
-													<when expression='#[(vars.qURL  == "true")]'>
+													<when expression='#[(vars.qURL  == "true")and (vars.qspec == null) and (vars.qdim == null) and (vars.qref == null) and (vars.qtaille == null)]'>
 														<ee:transform doc:name="Transform Message" doc:id="f3065a19-9617-4338-9e76-bf3d18b92e89" >
 															<ee:message >
 																<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-(payload.name default [])zip (payload.URL default [])  map ((item) -> {
-    name: item[0], 
-    URL: item[1], 
-        
-})
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        URL: item.URL
+    })
+
 ]]></ee:set-payload>
 															</ee:message>
 														</ee:transform>
 													</when>
 													<otherwise >
-														<logger level="INFO" doc:name="No question" doc:id="eece50bb-152f-4a4e-b315-719ed88fbc9a" message="No question " />
-														<ee:transform doc:name="No question" doc:id="430ba8e5-fb20-49c4-99fe-c64515934c9c">
+														<choice doc:name="Choice" doc:id="7234201a-faa7-41e8-9d74-00886f321cc2">
+															<when expression='#[(vars.qreference  == "true")and (vars.qspec == null) and (vars.qdim == null) and (vars.qref == null) and (vars.qtaille == null)]'>
+																<ee:transform doc:name="Transform Message" doc:id="8a9ff68f-50d1-49d1-b97e-965c6017def0" >
+																	<ee:message >
+																		<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        reference: item.reference
+       
+    })
+
+]]></ee:set-payload>
+																	</ee:message>
+																</ee:transform>
+															</when>
+															<otherwise >
+																<choice doc:name="Choice" doc:id="8e8540a6-33a1-446b-8720-a4e7c310d5b1">
+																	<when expression='#[(vars.qdimensions  == "true")and (vars.qspec == null) and (vars.qdim == null) and (vars.qref == null) and (vars.qtaille == null)]'>
+																		<ee:transform doc:name="Transform Message" doc:id="8dba38df-0bc0-4bde-bb8b-99bdbcb65002" >
+																			<ee:message >
+																				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        dimensions: item.dimensions
+       
+    })
+
+]]></ee:set-payload>
+																			</ee:message>
+																		</ee:transform>
+																	</when>
+																	<otherwise >
+																		<choice doc:name="Choice" doc:id="39a95756-15df-4442-90f7-740965684c40">
+																			<when expression='#[vars.qspec != null and vars.qspec != ""]'>
+																				<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="bd74af42-9a41-4098-b7bf-1ca850a55d17">
+																					<ee:message>
+																						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var brandName = vars.qspec
+&#45;&#45;-
+(payload default [&#93;)  
+    filter ((item) -> brandName == null or item.brand == brandName)
+&#93;&#93;></ee:set-payload>
+																					</ee:message>
+																				</ee:transform> [STUDIO] -->
+																				<!-- [STUDIO:"Choice"]<choice doc:name="Choice" doc:id="1d9e30ac-a247-4680-9faf-91669bbecba0" >
+																					<when expression='#[(vars.qprice  == "true")&#93;'>
+																						<ee:transform doc:name="Transform Message" doc:id="71767642-7f69-408e-8306-97206a017371" >
+																							<ee:message >
+																								<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        price: item.price
+       
+    })
+
+
+&#93;&#93;></ee:set-payload>
+																							</ee:message>
+																						</ee:transform>
+																					</when>
+																					<otherwise >
+																						<choice doc:name="Choice" doc:id="36061921-68ae-4014-b053-82afe64b2072" >
+																							<when expression='#[(vars.qinstock == "true")&#93;'>
+																								<ee:transform doc:name="Transform Message" doc:id="8c90ff29-3dd8-4d9a-a069-eedf1807a937" >
+																									<ee:message >
+																										<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        inStock: item.inStock
+    })
+&#93;&#93;></ee:set-payload>
+																									</ee:message>
+																								</ee:transform>
+																							</when>
+																							<otherwise>
+																								<choice doc:name="Choice" doc:id="0bb773ec-2fd8-4dfb-9f21-868aa5c45608" >
+																									<when expression='#[(vars.qcolor  == "true")&#93;'>
+																										<ee:transform doc:name="Transform Message" doc:id="9e0a4a82-aedc-4a92-9811-2a2fb9d47b2f" >
+																											<ee:message >
+																												<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        color: item.color
+       
+    })
+
+&#93;&#93;></ee:set-payload>
+																											</ee:message>
+																										</ee:transform>
+																									</when>
+																									<otherwise >
+																										<choice doc:name="Choice" doc:id="e8faf5f0-91ed-4536-80d6-84b6334db812" >
+																											<when expression='#[((vars.qinstock =="true") and (vars.qprice == "true"))&#93;'>
+																												<ee:transform doc:name="Transform Message" doc:id="4b2c8a59-acda-43a0-ae75-73cc0847819f" >
+																													<ee:message >
+																														<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+&#45;&#45;-
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        price: item.price,
+        inStock: item.inStock
+    })
+&#93;&#93;></ee:set-payload>
+																													</ee:message>
+																												</ee:transform>
+																											</when>
+																											<otherwise >
+																												<choice doc:name="Choice" doc:id="9ad3b0f1-e6a0-495a-9f8a-51a07a6cc527" >
+																													<when expression='#[(vars.qURL  == "true")&#93;'/>
+																												</choice>
+																											</otherwise>
+																										</choice>
+																									</otherwise>
+																								</choice>
+																							</otherwise>
+																						</choice>
+																					</otherwise>
+																				</choice> [STUDIO] -->
+																				<flow-ref doc:name="Flow Reference" doc:id="b60bc01c-2bea-4272-beb7-82092fd86365" name="choice"/>
+																			</when>
+																			<otherwise >
+																				<choice doc:name="Choice" doc:id="79803265-f2c9-477d-bdb0-40dda0b21caa">
+																					<when expression='#[vars.qref != null and vars.qref != ""]'>
+																						<ee:transform doc:name="Transform Message" doc:id="7a1bed2c-4e3d-486a-94a3-d09c77ff13f0">
+																					<ee:message>
+																						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var referenceName = vars.qref
+---
+(payload default [])  
+    filter ((item) -> referenceName == null or item.reference == referenceName)
+]]></ee:set-payload>
+																					</ee:message>
+																				</ee:transform>
+																						<choice doc:name="Choice" doc:id="dc17b077-353c-4744-86a6-ff89323147ed" >
+																							<when expression='#[(vars.qinstock == "true")]'>
+																								<ee:transform doc:name="Transform Message" doc:id="e2952cfd-f0a0-4641-b3e8-5efa36c4baa0">
+																							<ee:message>
+																								<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        reference: item.reference,
+        inStock: item.inStock
+    })
+]]></ee:set-payload>
+																							</ee:message>
+																						</ee:transform>
+																							</when>
+																							<otherwise >
+																								<ee:transform doc:name='No question' doc:id="03de5589-fe21-4c45-bafa-5d686e2c4bac" >
+																									<ee:message >
+																										<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "message": "No question"
+}
+]]></ee:set-payload>
+																									</ee:message>
+																								</ee:transform>
+																							</otherwise>
+																						</choice>
+																					</when>
+																					<otherwise >
+																						<choice doc:name="Choice" doc:id="5d69c682-74cb-4514-9d20-54393bd53353">
+																							<when expression='#[vars.qdim != null and vars.qdim != ""]'>
+																								<ee:transform doc:name="Transform Message" doc:id="966ee985-b054-458c-abe3-bbe508598cdc" >
+																									<ee:message >
+																										<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var dimensionName = vars.qdim
+---
+(payload default [])  
+    filter ((item) -> dimensionName == null or item.dimensions == dimensionName)
+]]></ee:set-payload>
+																									</ee:message>
+																								</ee:transform>
+																								<choice doc:name="Choice" doc:id="8898dfb6-7fbb-45aa-892e-81e2bb535deb" >
+																									<when expression='#[(vars.qinstock == "true")]'>
+																										<ee:transform doc:name="Transform Message" doc:id="8e532ad0-e951-446b-a7ba-87fe0a73a522">
+																									<ee:message>
+																										<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+(payload.name default[]) zip  (payload.brand default[])zip  (payload.dimension default[])zip  (payload.inStock default[])
+   
+    map ((item) -> {
+        name: item[0][0], 
+        brand: item[0][1], 
+        dimension: item[1][0], 
+        inStock: item[1][1] 
+    }) ]]></ee:set-payload>
+																									</ee:message>
+																								</ee:transform>
+																									</when>
+																									<otherwise >
+																										<choice doc:name="Choice" doc:id="a2b5bf0c-788e-4524-ae57-784b81e82c07" >
+																											<when expression='#[(vars.qprice  == "true")]'>
+																												<ee:transform doc:name="Transform Message" doc:id="9666b863-dfd9-4064-984a-37b1e89d9694" >
+																													<ee:message >
+																														<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        reference: item.reference,
+        price: item.price
+       
+    })
+
+
+]]></ee:set-payload>
+																													</ee:message>
+																												</ee:transform>
+																											</when>
+																											<otherwise >
+																												<ee:transform doc:name="No question" doc:id="024c7e44-c0d6-411e-a769-2479270c8ca0" >
+																													<ee:message >
+																														<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "message": "No question"
+}
+]]></ee:set-payload>
+																													</ee:message>
+																												</ee:transform>
+																											</otherwise>
+																										</choice>
+																									</otherwise>
+																								</choice>
+																							</when>
+																							<otherwise >
+																								<choice doc:name="Choice" doc:id="c962b438-7349-4a4b-88a0-367de158c218">
+																									<when expression='#[vars.qtaille != null and vars.qtaille != ""]'>
+																										<ee:transform doc:name="Transform Message" doc:id="80cd6921-897f-4eb8-b0aa-e7171d83d2a1" >
+																											<ee:message >
+																												<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var tailleName = vars.qtaille
+---
+(payload default [])  
+    filter ((item) -> tailleName == null or item.size == tailleName)
+]]></ee:set-payload>
+																											</ee:message>
+																										</ee:transform>
+																										<choice doc:name="Choice" doc:id="6035b900-bdb4-4882-8853-71cfeaadb9b6" >
+																											<when expression='#[(vars.qinstock == "true")]'>
+																												<ee:transform doc:name="Transform Message" doc:id="bf5eadac-fad1-4448-a9ae-4f8db066521a">
+																											<ee:message>
+																												<ee:set-payload><![CDATA[ %dw 2.0
+output application/json
+---
+(payload.name default[]) zip  (payload.brand default[])zip  (payload.size default[])zip  (payload.inStock default[])
+   
+    map ((item) -> {
+        name: item[0][0], 
+        brand: item[0][1], 
+        size: item[1][0], 
+        inStock: item[1][1] 
+    }) 
+]]></ee:set-payload>
+																											</ee:message>
+																										</ee:transform>
+																											</when>
+																											<otherwise >
+																												<ee:transform doc:name="No question" doc:id="d68bcffe-e61e-4d72-81a1-3e064cdf66dd" >
+																													<ee:message >
+																														<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "message": "No question"
+}
+]]></ee:set-payload>
+																													</ee:message>
+																												</ee:transform>
+																											</otherwise>
+																										</choice>
+																									</when>
+																									<otherwise>
+																										<logger level="INFO" doc:name="No question" doc:id="eece50bb-152f-4a4e-b315-719ed88fbc9a" message="No question " />
+																										<ee:transform doc:name="No question" doc:id="430ba8e5-fb20-49c4-99fe-c64515934c9c">
 									<ee:message>
 										<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -186,6 +537,200 @@ output application/json
 ]]></ee:set-payload>
 									</ee:message>
 								</ee:transform>
+																									</otherwise>
+																								</choice>
+																							</otherwise>
+																						</choice>
+																					</otherwise>
+																				</choice>
+																			</otherwise>
+																		</choice>
+																	</otherwise>
+																</choice>
+															</otherwise>
+														</choice>
+													</otherwise>
+												</choice>
+											</otherwise>
+										</choice>
+									</otherwise>
+								</choice>
+							</otherwise>
+						</choice>
+					</otherwise>
+				</choice>
+			</otherwise>
+		</choice>
+	</sub-flow>
+	<sub-flow name="choice" doc:id="4a872c45-9e8a-49e5-9f61-ae02d572def6" >
+		<ee:transform doc:name="Transform Message" doc:id="e0ab902b-dcf8-4e2e-8cfe-8b6ded5683dc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var brandName = vars.qspec
+---
+(payload default [])  
+    filter ((item) -> brandName == null or item.brand == brandName)
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<choice doc:name="Choice" doc:id="664e74bc-9d4b-411d-b69e-7ca07dd7bbdb" >
+			<when expression='#[(vars.qprice  == "true")and (vars.qinstock  == null)]' >
+				<ee:transform doc:name="Transform Message" doc:id="c0ebc550-a6b3-400b-9a5a-e3a453ad6712" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        price: item.price
+       
+    })
+
+
+]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<choice doc:name="Choice" doc:id="79c2966b-412d-4693-8cc9-b7391c3d1c4f" >
+					<when expression='#[(vars.qinstock == "true")and (vars.qprice  == null)]' >
+						<ee:transform doc:name="Transform Message" doc:id="8c16dccd-2757-4770-8f50-1375f07e09b1" >
+							<ee:message >
+								<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+(payload.name default[]) zip  (payload.brand default[]) zip  (payload.inStock default[])
+   
+    map ((item) -> {
+        name: item[0][0], 
+        brand: item[0][1],  
+        inStock: item[1][1] 
+    }) ]]></ee:set-payload>
+							</ee:message>
+						</ee:transform>
+					</when>
+					<otherwise >
+						<choice doc:name="Choice" doc:id="b03f87d0-f0c3-45fc-a9c4-9b5d58c4b24e" >
+							<when expression='#[(vars.qcolor  == "true")]' >
+								<ee:transform doc:name="Transform Message" doc:id="291dd01a-6606-47a4-903f-c2f7d839ab25" >
+									<ee:message >
+										<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        color: item.color
+       
+    })
+
+]]></ee:set-payload>
+									</ee:message>
+								</ee:transform>
+							</when>
+							<otherwise >
+								<choice doc:name="Choice" doc:id="07ea013b-ee0b-4a3b-96c4-79ec55021457" >
+									<when expression='#[((vars.qinstock =="true") and (vars.qprice == "true"))]' >
+										<ee:transform doc:name="Transform Message" doc:id="9bb92e07-7f1f-414a-8442-6b141c2e6780" >
+											<ee:message >
+												<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        price: item.price,
+        inStock: item.inStock
+    })
+
+]]></ee:set-payload>
+											</ee:message>
+										</ee:transform>
+									</when>
+									<otherwise >
+										<choice doc:name="Choice" doc:id="2a584b8e-3edb-4d06-9ead-5bdcaa52f0d1" >
+											<when expression='#[(vars.qURL  == "true")]' >
+												<ee:transform doc:name="Transform Message" doc:id="5bfbcab4-16fa-4b1e-9711-2975204ce80c" >
+													<ee:message >
+														<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        URL: item.URL
+    })
+
+]]></ee:set-payload>
+													</ee:message>
+												</ee:transform>
+											</when>
+											<otherwise >
+												<choice doc:name="Choice" doc:id="58c0b0eb-6def-40ff-b50b-5a5527d4eec9" >
+													<when expression='#[(vars.qreference  == "true")]'>
+														<ee:transform doc:name="Transform Message" doc:id="d2ee28e4-7375-495e-84a9-75e9c11bfc61" >
+															<ee:message >
+																<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        reference: item.reference
+       
+    })
+
+]]></ee:set-payload>
+															</ee:message>
+														</ee:transform>
+													</when>
+													<otherwise >
+														<choice doc:name="Choice" doc:id="2035e649-a9ba-4bf5-b5fa-4b254d1a37dc" >
+															<when expression='#[(vars.qdimensions  == "true")]'>
+																<ee:transform doc:name="Transform Message" doc:id="d567863a-d8ef-4454-9e1e-499648c8ad15" >
+																	<ee:message >
+																		<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload 
+    filter ((item) -> item.inStock == true) 
+    map ((item) -> {
+        name: item.name,
+        brand: item.brand,
+        dimensions: item.dimensions
+       
+    })
+
+]]></ee:set-payload>
+																	</ee:message>
+																</ee:transform>
+															</when>
+															<otherwise >
+																<ee:transform doc:name="No question" doc:id="4feb2e7f-e5ec-489c-821d-d36aacc146c0" >
+																	<ee:message >
+																		<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "message": "No question"
+}
+]]></ee:set-payload>
+																	</ee:message>
+																</ee:transform>
+															</otherwise>
+														</choice>
 													</otherwise>
 												</choice>
 											</otherwise>
