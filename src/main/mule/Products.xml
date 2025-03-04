@@ -8,7 +8,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	<sub-flow name="Products" doc:id="b754f139-81d6-4179-98fd-593cd6907b79" >
 		<logger level="INFO" doc:name="payload" doc:id="a5babe5b-3cb3-451d-b06c-a6a1cf19a150" message="#[payload]"/>
 		<http:request method="GET" doc:name="Request" doc:id="d082aef9-842f-44ac-a420-755e4243d2fc" url="http://localhost:8081/e-com-sys-api/v1/products" />
-		<logger level="INFO" doc:name="outputwix" doc:id="b8472e19-7178-422e-9160-e593322cd205" message="outputwix#[payload]" />
+		<!-- [STUDIO:"outputwix"]<logger level="INFO" doc:name="outputwix" doc:id="b8472e19-7178-422e-9160-e593322cd205" message="outputwix#[payload&#93;" /> [STUDIO] -->
 		<ee:transform doc:name="Transform Message" doc:id="a26111e3-a558-41b8-a864-563c12ad3826" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -59,7 +59,7 @@ var productName = vars.qname
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="4c4e0a71-58e6-485d-9bbd-8c86270ec66e" message="filter:#[payload]"/>
+		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="4c4e0a71-58e6-485d-9bbd-8c86270ec66e" message="filter:#[payload&#93;"/> [STUDIO] -->
 		<!-- [STUDIO:"Transform Message"]<ee:transform doc:name="Transform Message" doc:id="01d3c080-9d95-47b3-9091-a25e5b9eb9a2" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -102,7 +102,7 @@ payload
 ]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<logger level="INFO" doc:name="Logger" doc:id="d3645f3a-caa6-4c45-9bb3-f16065a57a2b" message="apretchoice#[payload]"/>
+				<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="d3645f3a-caa6-4c45-9bb3-f16065a57a2b" message="apretchoice#[payload&#93;"/> [STUDIO] -->
 			</when>
 			<otherwise>
 				<choice doc:name="Choice" doc:id="076e477b-4f76-4fce-a03b-a86781bd943d" >
@@ -112,7 +112,7 @@ payload
 								<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-(payload.name default[]) zip  (payload.brand default[])zip  (payload.dimension default[])zip  (payload.inStock default[])
+(payload.name default[]) zip  (payload.brand default[]) zip  (payload.inStock default[])
    
     map ((item) -> {
         name: item[0][0], 
@@ -365,24 +365,29 @@ payload
 output application/json
 var referenceName = vars.qref
 ---
-(payload default [])  
-    filter ((item) -> referenceName == null or item.reference == referenceName)
+(payload default [])
+    filter ((item) ->item.reference contains referenceName 
+    
+       
+    )
 ]]></ee:set-payload>
 																					</ee:message>
 																				</ee:transform>
+																						<logger level="INFO" doc:name="Logger" doc:id="dcb17f2c-7256-478c-8011-af71184806b2" message="#[payload]"/>
 																						<choice doc:name="Choice" doc:id="dc17b077-353c-4744-86a6-ff89323147ed" >
 																							<when expression='#[(vars.qinstock == "true")]'>
 																								<ee:transform doc:name="Transform Message" doc:id="e2952cfd-f0a0-4641-b3e8-5efa36c4baa0">
 																							<ee:message>
 																								<ee:set-payload><![CDATA[%dw 2.0
 output application/json
+var referenceName = vars.qref
 ---
-payload 
-    filter ((item) -> item.inStock == true) 
+(payload default [])
+    filter ((item) -> item.reference contains referenceName)
     map ((item) -> {
         name: item.name,
         brand: item.brand,
-        reference: item.reference,
+        reference: referenceName,
         inStock: item.inStock
     })
 ]]></ee:set-payload>
@@ -414,8 +419,11 @@ output application/json
 var dimensionName = vars.qdim
 ---
 (payload default [])  
-    filter ((item) -> dimensionName == null or item.dimensions == dimensionName)
-]]></ee:set-payload>
+    filter ((item) -> item.dimensions contains dimensionName)
+
+   
+    
+    ]]></ee:set-payload>
 																									</ee:message>
 																								</ee:transform>
 																								<choice doc:name="Choice" doc:id="8898dfb6-7fbb-45aa-892e-81e2bb535deb" >
@@ -424,15 +432,17 @@ var dimensionName = vars.qdim
 																									<ee:message>
 																										<ee:set-payload><![CDATA[%dw 2.0
 output application/json
+var dimensionName = vars.qdim
 ---
-(payload.name default[]) zip  (payload.brand default[])zip  (payload.dimension default[])zip  (payload.inStock default[])
-   
+(payload default [])
+    filter ((item) -> item.dimensions contains dimensionName)
     map ((item) -> {
-        name: item[0][0], 
-        brand: item[0][1], 
-        dimension: item[1][0], 
-        inStock: item[1][1] 
-    }) ]]></ee:set-payload>
+        name: item.name,
+        brand: item.brand,
+        dimensions: dimensionName,
+        inStock: item.inStock
+    })
+     ]]></ee:set-payload>
 																									</ee:message>
 																								</ee:transform>
 																									</when>
@@ -443,18 +453,17 @@ output application/json
 																													<ee:message >
 																														<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
+var dimensionName = vars.qdim
 ---
-payload 
-    filter ((item) -> item.inStock == true) 
+(payload default [])
+    filter ((item) -> item.inStock == true)  
+    filter ((item) -> item.dimensions contains dimensionName) 
     map ((item) -> {
         name: item.name,
         brand: item.brand,
-        reference: item.reference,
+        dimensions: dimensionName,  
         price: item.price
-       
     })
-
-
 ]]></ee:set-payload>
 																													</ee:message>
 																												</ee:transform>
@@ -486,7 +495,7 @@ output application/json
 var tailleName = vars.qtaille
 ---
 (payload default [])  
-    filter ((item) -> tailleName == null or item.size == tailleName)
+    filter ((item) -> item.size contains tailleName)
 ]]></ee:set-payload>
 																											</ee:message>
 																										</ee:transform>
@@ -496,16 +505,17 @@ var tailleName = vars.qtaille
 																											<ee:message>
 																												<ee:set-payload><![CDATA[ %dw 2.0
 output application/json
+var  tailleName = vars.qtaille
 ---
-(payload.name default[]) zip  (payload.brand default[])zip  (payload.size default[])zip  (payload.inStock default[])
-   
+(payload default [])
+    filter ((item) -> item.size contains tailleName)
     map ((item) -> {
-        name: item[0][0], 
-        brand: item[0][1], 
-        size: item[1][0], 
-        inStock: item[1][1] 
-    }) 
-]]></ee:set-payload>
+        name: item.name,
+        brand: item.brand,
+        size: tailleName,
+        inStock: item.inStock
+    })
+     ]]></ee:set-payload>
 																											</ee:message>
 																										</ee:transform>
 																											</when>
@@ -608,7 +618,7 @@ output application/json
     map ((item) -> {
         name: item[0][0], 
         brand: item[0][1],  
-        inStock: item[1][1] 
+        inStock: item[1] 
     }) ]]></ee:set-payload>
 							</ee:message>
 						</ee:transform>
