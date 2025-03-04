@@ -3,7 +3,7 @@
     <http:listener-config name="e-com-proc-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8082" />
     </http:listener-config>
-    <apikit:config name="e-com-proc-api-config" api="resource::db99da3a-157e-4f8d-9a28-bcf1656c8643:e-com-proc-api:1.0.3:raml:zip:e-com-proc-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="e-com-proc-api-config" api="resource::db99da3a-157e-4f8d-9a28-bcf1656c8643:e-com-proc-api:1.0.7:raml:zip:e-com-proc-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="e-com-proc-api-main">
         <http:listener config-ref="e-com-proc-api-httpListenerConfig" path="/e-com-proc-api/v1/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -179,5 +179,8 @@ output application/json
     </flow> [STUDIO] -->
     <flow name="get:\products:e-com-proc-api-config">
         <flow-ref doc:name="Flow Reference" doc:id="1af17991-8ce8-4218-8cb7-9e3dcc1ee18d" name="Products" />
+    </flow>
+    <flow name="post:\orders:application\json:e-com-proc-api-config">
+		<flow-ref doc:name="Flow Reference" doc:id="f1556484-c8fe-46b7-b534-3c81bc92fe6e" name="Orders"/>
     </flow>
 </mule>

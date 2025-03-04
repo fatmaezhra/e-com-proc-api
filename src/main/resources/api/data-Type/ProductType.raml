@@ -1,0 +1,111 @@
+#%RAML 1.0 DataType
+type: object
+properties:
+  id: string
+  name: string
+  slug: string
+  visible: boolean
+  productType: string
+  description: string
+  sku: string
+  weight: number
+  weightRange:
+    type: object
+    properties:
+      minValue: number
+      maxValue: number
+  stock:
+    type: object
+    properties:
+      trackInventory: boolean
+      quantity: integer
+      inStock: boolean
+      inventoryStatus: string
+  price:
+    type: object
+    properties:
+      currency: string
+      price: number
+      discountedPrice: number
+      formatted:
+        type: object
+        properties:
+          price: string
+          discountedPrice: string
+  priceData: 
+    type: object
+    properties:
+      currency: string
+      price: number
+      discountedPrice: number
+      formatted:
+        type: object
+        properties:
+          price: string
+          discountedPrice: string
+  convertedPriceData:
+    type: object
+    properties:
+      currency: string
+      price: number
+      discountedPrice: number
+      formatted:
+        type: object
+        properties:
+          price: string
+          discountedPrice: string
+  priceRange:
+    type: object
+    properties:
+      minValue: number
+      maxValue: number
+  costRange:
+    type: object
+    properties:
+      minValue: number
+      maxValue: number
+  additionalInfoSections: array
+  ribbons: array
+  media:
+    type: object
+    properties:
+      items: array
+  customTextFields: array
+  manageVariants: boolean
+  productOptions:
+    type: array
+    items:
+      type: object
+      properties:
+        optionType: string
+        name: string
+        choices:
+          type: array
+          items:
+            type: object
+            properties:
+              value: string
+              description: string
+              inStock: boolean
+              visible: boolean
+  productPageUrl:
+    type: object
+    properties:
+      base: string
+      path: string
+  numericId: string
+  inventoryItemId: string
+  discount:
+    type: object
+    properties:
+      type: string
+      value: number
+  collectionIds: 
+    type: array
+    items: string
+  variants: array
+  lastUpdated: datetime
+  createdDate: datetime
+  ribbon: string
+  brand: string
+  exportProductId: string

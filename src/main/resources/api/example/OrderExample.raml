@@ -1,0 +1,54 @@
+#%RAML 1.0 NamedExample
+value:
+  order:
+    totals:
+      subtotal: "10"
+      total: "10"
+      shipping: "3"
+      tax: "3"
+      discount: "1"
+    billingInfo:
+      paymentMethod: "PayPal"
+      paymentProviderTransactionId: "tx_1806"
+      address:
+        email: "Ivanushka@example.com"
+        fullName:
+          firstName: "John"
+          lastName: "Smith"
+        country: "US"
+        city: "New York"
+        zipCode: "92544"
+        phone: "+972 555234555"
+    shippingInfo:
+      deliveryOption: "Express"
+      estimatedDeliveryTime: "Today"
+      shippingRegion: "Domestic"
+      shipmentDetails:
+        address:
+          email: "Ivanushka@example.com"
+          fullName:
+            firstName: "John"
+            lastName: "Smith"
+          country: "US"
+          city: "New York"
+          zipCode: "92544"
+          phone: "+972 555234555"
+        tax: "1"
+        priceData:
+          price: "3"
+          taxIncludedInPrice: false
+    paymentStatus: "PAID"
+    lineItems:
+      - quantity: 2
+        discount: "1"
+        tax: "1"
+        name: "my product"
+        productId: "a1f9d337-f831-4529-31e6-67db8fd4e1aa"
+        lineItemType: "PHYSICAL"
+        weight: "15"
+        sku: "12345678"
+        priceData:
+          price: "5"
+          taxIncludedInPrice: false
+    channelInfo:
+      type: "WEB"
