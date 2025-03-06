@@ -1,12 +1,6 @@
 #%RAML 1.0 NamedExample
 value:
   order:
-    totals:
-      subtotal: "10"
-      total: "10"
-      shipping: "3"
-      tax: "3"
-      discount: "1"
     billingInfo:
       paymentMethod: "PayPal"
       paymentProviderTransactionId: "tx_1806"
@@ -37,7 +31,6 @@ value:
         priceData:
           price: "3"
           taxIncludedInPrice: false
-    paymentStatus: "PAID"
     lineItems:
       - quantity: 2
         discount: "1"
@@ -50,5 +43,6 @@ value:
         priceData:
           price: "5"
           taxIncludedInPrice: false
+    paymentStatus: "PAID"
     channelInfo:
       type: "WEB"

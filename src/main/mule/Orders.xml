@@ -1,11 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="Orders" doc:id="3dc0f80f-0563-4e95-8b50-7b326de5cdf8" >
 		<logger level="INFO" doc:name="Logger" doc:id="6111f225-9bc6-43f4-b0d7-b6b597172e03" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="1cf1dba5-5f7d-41ee-9f70-a66caad1a840" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "order": {
+    "totals": {
+      "subtotal": "50",
+      "total": "50"
+    },
+    "billingInfo": payload.order.billingInfo, 
+    "shippingInfo": {
+      "shipmentDetails": {
+        "address": {
+          "email": payload.order.shippingInfo.shipmentDetails.address.email, 
+          "fullName": {  
+            "firstName": payload.order.shippingInfo.shipmentDetails.address.fullName.firstName,
+            "lastName": payload.order.shippingInfo.shipmentDetails.address.fullName.lastName
+          },
+          "country": payload.order.shippingInfo.shipmentDetails.address.country,
+          "city": payload.order.shippingInfo.shipmentDetails.address.city,
+          "phone": payload.order.shippingInfo.shipmentDetails.address.phone
+        },
+        "priceData": {
+          "price": "50", 
+          "taxIncludedInPrice": false
+        }
+      }
+    },
+    "paymentStatus": "NOT_PAID",
+    "lineItems": payload.order.lineItems map (item) -> {
+      "quantity": item.quantity,
+      "name": item.name,
+      "priceData": {
+        "price": "50"
+      }
+    },
+    "channelInfo": {
+      "type": "WEB"
+    }
+  }
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
 		<http:request method="POST" doc:name="Request" doc:id="c2dbb65e-35b1-440b-8a82-0e49d03b5ef6" url="http://localhost:8081/e-com-sys-api/v1/orders"/>
 		<logger level="INFO" doc:name="output wix" doc:id="b81111a4-e44f-488c-8291-63b437b29582" message="#[payload]"/>
 	</sub-flow>
