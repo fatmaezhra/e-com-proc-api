@@ -533,4 +533,5 @@ type auto_3dc0f80f_0563_4e95_8b50_7b326de5cdf8_Output_Attributes = {|
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#ca237a95-29d7-46e4-80cc-7f4387ef7fcd"/>
 </types:mule>
