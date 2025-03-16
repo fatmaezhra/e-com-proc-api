@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="Compte" doc:id="07af1dd9-8864-408f-b308-2de1b616ec6f" >
+		<ee:transform doc:name="Transform Message" doc:id="7e18addf-1312-4fbe-8476-cf94072aef12" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+   
+        Name: payload.nomCompte,
+        Nom__c: payload.nom,
+        Pr_nom__c: payload.prenom,
+        Sexe__c: payload.sexe,
+        age__c: payload.age,
+        Phone: payload.telephone,
+        emailAddress__c: payload.email,
+        Moyen_de_Contact_Pr_f_r__c: payload.contactPref,
+        Cat_gories_de_Produits_Services_Favoris__c: payload.categorieProduit,
+        Produits_Favoris__c: payload.produitFavoris,
+        Marques_Pr_f_r_es__c: payload.marquePreferee,
+        nom_d_utilisateur: payload.username,
+        mot_de_passe: payload.password,
+        Confirmer_le_mot_de_passe: payload.confirmPassword
+    }
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="compte" doc:id="1760e34a-b7b3-48e6-99b0-0f11a2a42a87" message="compte#[payload]"/>
+		<http:request method="POST" doc:name="Request" doc:id="99a837b2-9423-47d3-9630-0722d67b69f4" url="http://localhost:8081/salesforce-sys-api/v1/compte"/>
+		<logger level="INFO" doc:name="Logger" doc:id="f79c8482-75e6-4b23-bee6-0b33b7375b8c" message="#[payload]"/>
+	</sub-flow>
+</mule>

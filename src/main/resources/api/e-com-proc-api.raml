@@ -3,6 +3,7 @@ title: e-com-proc-api
 types:
   productType: !include data-Type/ProductType.raml
   orderType: !include data-Type/OrderType.raml
+  compteType: !include data-Type/CompteType.raml
 /products:
   get:
     
@@ -26,3 +27,16 @@ types:
           application/json: 
             example:
               message: Commande créée avec succès
+/compte:
+  post:  
+    body:
+      application/json:
+        type: compteType  
+        example: !include example/CompteExample.raml  
+        
+    responses:
+      201:
+        body:
+          application/json: 
+            example:
+              message: Compte créée avec succès
