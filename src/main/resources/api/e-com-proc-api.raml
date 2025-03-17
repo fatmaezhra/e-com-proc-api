@@ -4,6 +4,7 @@ types:
   productType: !include data-Type/ProductType.raml
   orderType: !include data-Type/OrderType.raml
   compteType: !include data-Type/CompteType.raml
+  verifType: !include data-Type/VerifType.raml
 /products:
   get:
     
@@ -40,3 +41,18 @@ types:
           application/json: 
             example:
               message: Compte créée avec succès
+  get:
+    
+    queryParameters:
+       username:
+        type: string
+        required: true
+       password:
+        type: string
+        required: true           
+    responses:
+      200:
+        body:
+          application/json:
+            type: verifType
+            example: !include example/VerifExample.raml              
