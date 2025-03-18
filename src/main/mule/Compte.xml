@@ -38,41 +38,46 @@ output application/json
 	</sub-flow>
 	<sub-flow name="Verif" doc:id="93fec3c3-9689-4fe7-95c7-685bed86453a" >
 		<!-- [STUDIO:"username/password"]<logger level="INFO" doc:name="username/password" doc:id="e2590006-e47d-453a-b0ad-8da3d2886ebf" message="username#[vars.username&#93;,password#[password&#93;"/> [STUDIO] -->
-		<ee:transform doc:name="Transform Message" doc:id="1c79dead-5337-49fc-b864-d3ce05664a44" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+		<http:request method="GET" doc:name="Request" doc:id="49de5e2c-ac22-4592-a648-baea5dee49bb" url="http://localhost:8081/salesforce-sys-api/v1/compte">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"username" : vars.username,
+	"password" : vars.password
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="1dd73046-34b7-4864-86bb-5c4dc6d7173f" message="#[payload]"/>
+		<choice doc:name="Choice" doc:id="94097bd0-02c3-4f44-8b7b-f54ceb071a52">
+				<when expression="#[payload != []]">
+					<ee:transform doc:name="coordonnés existe" doc:id="e5080192-0d47-4449-a163-c400fd637aca">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{"username" : vars.username,
- "password" : vars.password	
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="d149cc30-b20c-4b83-8945-135fdf6de163" variableName="usernamepassword"/>
-		<http:request method="GET" doc:name="Request" doc:id="49de5e2c-ac22-4592-a648-baea5dee49bb" url="http://localhost:8081/salesforce-sys-api/v1/compte"/>
-		<foreach doc:name="For Each" doc:id="5d1afda0-cb89-42e2-92a6-4052d48cab4c" collection="#[payload]">
-			<choice doc:name="Choice" doc:id="94097bd0-02c3-4f44-8b7b-f54ceb071a52" >
-				<when expression="#[vars.usernamepassword == payload]">
-					<ee:transform doc:name="coordonnés existe" doc:id="e5080192-0d47-4449-a163-c400fd637aca" >
-						<ee:message >
-							<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-"oui"]]></ee:set-payload>
+{
+    "success": true,
+    "message": "Connexion réussie"
+}
+]]></ee:set-payload>
 						</ee:message>
 					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="088dfb1f-dcc2-4e7b-9771-abb9f44337a3" message='#["coordonnés existe"]' />
 				</when>
-				<otherwise >
-					<ee:transform doc:name="coordonnés n'exixte pas" doc:id="d21dff44-b61f-4628-947b-c1eb023902c9" >
-						<ee:message >
-							<ee:set-payload ><![CDATA[%dw 2.0
+				<otherwise>
+					<ee:transform doc:name="coordonnés n'exixte pas" doc:id="d21dff44-b61f-4628-947b-c1eb023902c9">
+						<ee:message>
+							<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-"non"]]></ee:set-payload>
+{
+    "success": false,
+    "message": "Connexion non réussie"
+}
+]]></ee:set-payload>
 						</ee:message>
 					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="4281f348-62a4-4482-830f-4e1e548bcbec" message='#["coordonnés n existe pas"]' />
 				</otherwise>
 			</choice>
-		</foreach>
 	</sub-flow>
 </mule>
