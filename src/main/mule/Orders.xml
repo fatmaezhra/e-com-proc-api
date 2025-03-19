@@ -6,15 +6,11 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="Orders" doc:id="3dc0f80f-0563-4e95-8b50-7b326de5cdf8" >
-		<logger level="INFO" doc:name="Logger" doc:id="6111f225-9bc6-43f4-b0d7-b6b597172e03" message="#[payload]"/>
+		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="6111f225-9bc6-43f4-b0d7-b6b597172e03" message="#[payload&#93;"/> [STUDIO] -->
 		<ee:transform doc:name="Transform Message" doc:id="ca237a95-29d7-46e4-80cc-7f4387ef7fcd" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
-				<ee:set-variable variableName="input" ><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-variable>
 				<ee:set-variable variableName="inputpayload" ><![CDATA[%dw 2.0
 output application/json
 ---
@@ -24,10 +20,9 @@ payload
 		</ee:transform>
 		<http:request method="GET" doc:name="Request" doc:id="43bd29af-f17a-4fb9-868b-8414d2227fce" url="http://localhost:8081/e-com-sys-api/v1/products"/>
 		<set-variable value="#[payload]" doc:name="outputwix" doc:id="a760daed-2cc9-44a9-ab69-ba2b04a92140" variableName="outputwix"/>
-		<logger level="INFO" doc:name="Logger" doc:id="afb293fb-0cfb-4bc0-9397-3008b0ec30f9" message="wix#[payload]"/>
 		<set-variable value="0" doc:name="Set Variable" doc:id="7d8d5023-cdef-4cef-b024-a990223dfa6f" variableName="PrixTotale"/>
-		<!-- [STUDIO:"priceList"]<set-variable value='""' doc:name="priceList" doc:id="55fccf13-9070-4b1c-9c4e-0bae371506e2" variableName="priceList"/> [STUDIO] -->
 		<foreach doc:name="For Each" doc:id="98d244d9-11cb-4b51-bed9-115b66039832" collection="#[vars.inputpayload.order.lineItems]">
+			<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="d1928b8e-b889-4e30-b1a5-92bd899a92f7" message="item#[payload&#93;"/> [STUDIO] -->
 			<ee:transform doc:name="Transform Message" doc:id="8fa729a4-a6e1-48bd-8c20-046b329ac7db">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -82,13 +77,18 @@ var productName = payload.name
 output application/json
 ---
 payload.quantity]]></ee:set-variable>
+					<ee:set-variable variableName="brand" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.brand]]></ee:set-variable>
 				</ee:variables>
 		</ee:transform>
+			<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="69984b74-3149-4176-91ae-8d945e3a4c6e" message="quantity#[vars.quantity&#93;"/> [STUDIO] -->
 			<ee:transform doc:name="Transform Message" doc:id="f5920f98-72cc-4d10-8f19-e89cceb9da10">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
-var brandName = payload.brand
+var brandName = vars.brand
 
 ---
 (payload default [])  
@@ -96,7 +96,8 @@ var brandName = payload.brand
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-			<set-variable value="#[vars.priceList default [] ++ [payload[0].price]]" doc:name="priceList" doc:id="8190a856-0429-410f-92ef-c76f92aead5d" variableName="lineItemsList"/>
+			<set-variable value="#[vars.priceList default [] ++ [payload[0].price]]" doc:name="priceList" doc:id="8190a856-0429-410f-92ef-c76f92aead5d" variableName="priceList"/>
+			<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="b16c433e-61cb-45a4-b4d8-190db43e83c2" message="priceList#[vars.priceList&#93;"/> [STUDIO] -->
 			<ee:transform doc:name="Transform Message" doc:id="d0d99b51-b4fc-4b1a-b124-4b67cab753b0" >
 				<ee:message >
 					<ee:set-payload ><![CDATA[%dw 2.0
@@ -110,9 +111,20 @@ var price = payload[0].price default 0   // Définit une valeur par défaut si `
 ]]></ee:set-payload>
 				</ee:message>
 			</ee:transform>
-			<set-variable value="PrixTotale + payload.total" doc:name="Set Variable" doc:id="e8a595ed-cb7c-43e4-947d-891f4a514b27" variableName="PrixTotale"/>
+			<ee:transform doc:name="Transform Message" doc:id="173cd8e8-a18b-486e-904a-ccdf82a7c7df" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    PrixTotale: (vars.PrixTotale default 0) + (payload.total as Number) 
+}
+]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<set-variable value="#[payload.PrixTotale]" doc:name="Set Variable" doc:id="e8a595ed-cb7c-43e4-947d-891f4a514b27" variableName="PrixTotale"/>
 		</foreach>
-		<logger level="INFO" doc:name="Logger" doc:id="79298e2b-a465-4955-8025-a19c1e0998de" message="filterlogger#[payload]"/>
+		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="79298e2b-a465-4955-8025-a19c1e0998de" message="filterlogger#[payload&#93;"/> [STUDIO] -->
 		<ee:transform doc:name="Transform Message" doc:id="1cf1dba5-5f7d-41ee-9f70-a66caad1a840">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -157,8 +169,8 @@ var priceList = vars.priceList default []  // Assurez-vous que priceList est une
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="faeaf744-2921-42a8-bcc7-d928b916e4b2" />
+		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="faeaf744-2921-42a8-bcc7-d928b916e4b2" message="payloadfinal#[payload&#93;"/> [STUDIO] -->
 		<http:request method="POST" doc:name="Request" doc:id="c2dbb65e-35b1-440b-8a82-0e49d03b5ef6" url="http://localhost:8081/e-com-sys-api/v1/orders"/>
-		<logger level="INFO" doc:name="output wix" doc:id="b81111a4-e44f-488c-8291-63b437b29582" message="#[payload]"/>
+		<!-- [STUDIO:"output wix"]<logger level="INFO" doc:name="output wix" doc:id="b81111a4-e44f-488c-8291-63b437b29582" message="#[payload&#93;"/> [STUDIO] -->
 	</sub-flow>
 </mule>
