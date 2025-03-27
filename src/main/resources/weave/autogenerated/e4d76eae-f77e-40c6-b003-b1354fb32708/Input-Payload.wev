@@ -1,0 +1,7 @@
+%dw 2.0
+
+type auto_e4d76eae_f77e_40c6_b003_b1354fb32708_Input_Payload = {
+  Fulfillment_Status: String, 
+  _?: Any
+}
+

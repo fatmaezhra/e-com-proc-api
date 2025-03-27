@@ -5,6 +5,7 @@ types:
   orderType: !include data-Type/OrderType.raml
   compteType: !include data-Type/CompteType.raml
   verifType: !include data-Type/VerifType.raml
+  suivieOrdersType: !include data-Type/SuivieOrdersType.raml
 /products:
   get:
     
@@ -55,4 +56,18 @@ types:
         body:
           application/json:
             type: verifType
-            example: !include example/VerifExample.raml              
+            example: !include example/VerifExample.raml 
+            
+/suivie_orders:
+  get:
+    
+    queryParameters:
+      id:
+        type: string
+        required: true 
+    responses:
+      200:
+        body:
+          application/json:
+            type: suivieOrdersType
+            example: !include example/SuivieOrdersExample.raml                                      

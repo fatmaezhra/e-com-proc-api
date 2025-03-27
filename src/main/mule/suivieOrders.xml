@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="suivieOrders" doc:id="e4d76eae-f77e-40c6-b003-b1354fb32708" >
+		<logger level="INFO" doc:name="Logger" doc:id="eb07e647-fa4f-49c2-b288-5eb2cc3cabb8" message="#[payload]"/>
+		<http:request method="GET" doc:name="Request" doc:id="71ae220f-3bf7-4d4d-b603-bf03c40d3960" url="http://localhost:8081/e-com-sys-api/v1/suivie_orders">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"id" : vars.id
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="8e43f73f-87d8-4595-87d3-fa7abeac2744" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+(payload.orders filter (order) -> order.number == (vars.id as Number)) map (order) -> {
+    "Fulfillment_Status": order.fulfillmentStatus,
+    "orderNumber": order.number
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="e587591c-a06c-4d31-a326-a244c0ba387a" message="#[payload]"/>
+	</sub-flow>
+</mule>
