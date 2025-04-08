@@ -170,7 +170,8 @@ var priceList = vars.priceList default []  // Assurez-vous que priceList est une
 			</ee:message>
 		</ee:transform>
 		<!-- [STUDIO:"Logger"]<logger level="INFO" doc:name="Logger" doc:id="faeaf744-2921-42a8-bcc7-d928b916e4b2" message="payloadfinal#[payload&#93;"/> [STUDIO] -->
-		<http:request method="POST" doc:name="Request" doc:id="c2dbb65e-35b1-440b-8a82-0e49d03b5ef6" url="http://localhost:8081/e-com-sys-api/v1/orders"/>
+		<http:request method="POST" doc:name="Request" doc:id="c2dbb65e-35b1-440b-8a82-0e49d03b5ef6" url="http://localhost:8081/e-com-sys-api/v1/orders">
+		</http:request>
 		<!-- [STUDIO:"output wix"]<logger level="INFO" doc:name="output wix" doc:id="b81111a4-e44f-488c-8291-63b437b29582" message="#[payload&#93;"/> [STUDIO] -->
 	</sub-flow>
 </mule>
