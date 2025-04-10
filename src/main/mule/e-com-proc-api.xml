@@ -78,6 +78,14 @@ attributes.queryParams.password]]></ee:set-variable>
 output application/json
 ---
 attributes.queryParams.id]]></ee:set-variable>
+				<ee:set-variable variableName="name" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.name]]></ee:set-variable>
+				<ee:set-variable variableName="userEmail" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.userEmail]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <apikit:router config-ref="e-com-proc-api-config" />
