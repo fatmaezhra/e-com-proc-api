@@ -3,7 +3,7 @@
     <http:listener-config name="e-com-proc-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8082" />
     </http:listener-config>
-    <apikit:config name="e-com-proc-api-config" api="resource::db99da3a-157e-4f8d-9a28-bcf1656c8643:e-com-proc-api:1.0.13:raml:zip:e-com-proc-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="e-com-proc-api-config" api="resource::db99da3a-157e-4f8d-9a28-bcf1656c8643:e-com-proc-api:1.0.14:raml:zip:e-com-proc-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="e-com-proc-api-main">
         <http:listener config-ref="e-com-proc-api-httpListenerConfig" path="/e-com-proc-api/v1/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -211,5 +211,8 @@ output application/json
     </flow>
     <flow name="get:\suivie_orders:e-com-proc-api-config">
 		<flow-ref doc:name="Flow Reference" doc:id="073df328-23c7-4a11-8daa-d33d1499b026" name="suivieOrders"/>
+    </flow>
+       <flow name="get:\recommandation:e-com-proc-api-config">
+		<flow-ref doc:name="Flow Reference" doc:id="1e4cf978-73dd-4ade-802e-10a1acfa6ea8" name="Recommandation"/>
     </flow>
 </mule>

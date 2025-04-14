@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>db99da3a-157e-4f8d-9a28-bcf1656c8643</groupId>
 			<artifactId>e-com-proc-api</artifactId>
-			<version>1.0.13</version>
+			<version>1.0.14</version>
 			<classifier>raml</classifier>
 			<type>zip</type>
 		</dependency>

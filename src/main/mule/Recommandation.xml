@@ -6,7 +6,7 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 	<sub-flow name="Recommandation" doc:id="3410ff7f-db0c-4705-8270-d67be6676055" >
 		<logger level="INFO" doc:name="Logger" doc:id="32057f25-5efd-441c-8969-715604891c60" message="name#[vars.name] , userEmail#[vars.userEmail] " />
-		<http:request method="GET" doc:name="Request" doc:id="d0f784f8-bab0-4210-b29e-824b5343ac4e" url="http://localhost:8082/salesforce-sys-api/v1/recommandation" >
+		<http:request method="GET" doc:name="Request" doc:id="d0f784f8-bab0-4210-b29e-824b5343ac4e" url="http://localhost:8085/salesforce-sys-api/v1/recommandation" >
 			<http:query-params ><![CDATA[#[output application/java
 ---
 {

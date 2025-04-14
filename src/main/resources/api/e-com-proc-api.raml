@@ -6,6 +6,7 @@ types:
   compteType: !include data-Type/CompteType.raml
   verifType: !include data-Type/VerifType.raml
   suivieOrdersType: !include data-Type/SuivieOrdersType.raml
+  recommandationType: !include data-Type/RecommandationType.raml
 /products:
   get:
     
@@ -70,4 +71,21 @@ types:
         body:
           application/json:
             type: suivieOrdersType
-            example: !include example/SuivieOrdersExample.raml                                      
+            example: !include example/SuivieOrdersExample.raml 
+/recommandation:
+  get:
+    
+    queryParameters:
+      name:
+        type: string
+        required: true
+      userEmail:
+        type: string
+        required: true  
+    responses:
+      200:
+        body:
+          application/json:
+            type: recommandationType[]
+            example: !include example/RecommandationExample.raml            
+                                                 
